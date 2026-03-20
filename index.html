@@ -619,8 +619,8 @@
 // ══════════════════════════════════════
 // CONFIGURACIÓN — PON TU API KEY AQUÍ
 // ══════════════════════════════════════
-const GEMINI_API_KEY = 'AIzaSyA68obczHbEYpVOQplq2b8XkcfV2akJm7E';
-const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+const GROQ_API_KEY = 'PON_TU_API_KEY_AQUI';
+const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions';
 
 // ElevenLabs (opcional — dejar vacío si no tienes)
 const ELEVEN_KEY = '';
@@ -693,7 +693,7 @@ function startWithName() {
     : `¡Hola, amor! 💋 Qué bueno que llegaste... ¿Cómo estás hoy?`;
 
   addMessage('bot', greeting);
-  conversationHistory.push({ role: 'model', parts: [{ text: greeting }] });
+  conversationHistory.push({ role: 'assistant', content: greeting });
 }
 
 // ══════════════════════════════════════
@@ -743,14 +743,14 @@ async function sendMessage() {
   input.value = '';
   input.style.height = 'auto';
   addMessage('user', text);
-  conversationHistory.push({ role: 'user', parts: [{ text }] });
+  conversationHistory.push({ role: 'user', content: text });
   showTyping();
 
   try {
     const reply = await callGemini();
     removeTyping();
     addMessage('bot', reply);
-    conversationHistory.push({ role: 'model', parts: [{ text: reply }] });
+    conversationHistory.push({ role: 'assistant', content: reply });
 
     if (ELEVEN_KEY) {
       await speakElevenLabs(reply);
@@ -766,26 +766,28 @@ async function sendMessage() {
 // LLAMADA A GEMINI
 // ══════════════════════════════════════
 async function callGemini() {
-  const body = {
-    system_instruction: {
-      parts: [{ text: SYSTEM_PROMPT }]
-    },
-    contents: conversationHistory
-  };
+  const messages = [
+    { role: 'system', content: SYSTEM_PROMPT },
+    ...conversationHistory
+  ];
 
-  const response = await fetch(GEMINI_URL, {
+  const response = await fetch(GROQ_URL, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body)
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${GROQ_API_KEY}`
+    },
+    body: JSON.stringify({
+      model: 'llama3-70b-8192',
+      messages: messages,
+      max_tokens: 1024,
+      temperature: 0.9
+    })
   });
 
   const data = await response.json();
-
-  if (!response.ok) {
-    throw new Error(data.error?.message || 'Error Gemini API');
-  }
-
-  return data.candidates?.[0]?.content?.parts?.[0]?.text || '¿Me decías algo, amor? 💋';
+  if (!response.ok) throw new Error(data.error?.message || 'Error Groq');
+  return data.choices?.[0]?.message?.content || '¿Me decías algo, amor? 💋';
 }
 
 // ══════════════════════════════════════
