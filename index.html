@@ -547,6 +547,13 @@
       <strong>Valentina es una inteligencia artificial.</strong> No es una persona real.
     </div>
 
+    <p style="font-size:0.83rem;color:var(--muted);margin-bottom:1.5rem;line-height:1.7;text-align:left;">
+      Al entrar confirmas que tienes <span style="color:var(--rose);font-weight:500;">18 años o más</span> y entiendes que Valentina es una <span style="color:var(--rose);font-weight:500;">inteligencia artificial</span>, no una persona real.
+    </p>
+    <button class="btn-enter enabled" onclick="enterSite()">
+      Sí, tengo 18 años — Entrar 💋
+    </button>
+
 
 
 
@@ -666,8 +673,6 @@ function toggleCheck() {
 }
 
 function enterSite() {
-  const cb = document.getElementById('age-check');
-  if (!cb.checked) return;
   document.getElementById('age-gate').style.display = 'none';
   document.getElementById('name-screen').classList.add('active');
   setTimeout(() => document.getElementById('name-input').focus(), 300);
