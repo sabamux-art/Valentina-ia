@@ -30,7 +30,7 @@
     background: var(--bg);
     color: var(--text);
     font-family: 'Jost', sans-serif;
-    font-weight: 300;
+    font-weight: 300;a
     overflow: hidden;
   }
 
@@ -121,11 +121,13 @@
   }
 
   .checkbox-row input[type="checkbox"] {
-    width: 18px; height: 18px;
+    width: 22px; height: 22px;
+    min-width: 22px;
     flex-shrink: 0;
     margin-top: 2px;
     accent-color: var(--rose);
     cursor: pointer;
+    pointer-events: auto;
   }
 
   .checkbox-row label {
@@ -545,9 +547,9 @@
       <strong>Valentina es una inteligencia artificial.</strong> No es una persona real.
     </div>
 
-    <div class="checkbox-row" onclick="toggleCheck()">
-      <input type="checkbox" id="age-check">
-      <label for="age-check">
+    <div class="checkbox-row">
+      <input type="checkbox" id="age-check" onchange="toggleCheck()">
+      <label for="age-check" onclick="document.getElementById('age-check').click()">
         Confirmo que tengo <span>18 años o más</span> y acepto los
         <span>términos de uso</span>. Entiendo que Valentina es una IA,
         no una persona real.
@@ -610,7 +612,7 @@
 // ══════════════════════════════════════
 // CONFIGURACIÓN — PON TU API KEY AQUÍ
 // ══════════════════════════════════════
-const GEMINI_API_KEY = 'AIzaSyA68obczHbEYpVOQplq2b8XkcfV2akJm7E';
+const GEMINI_API_KEY = 'PON_TU_API_KEY_AQUI';
 const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
 
 // ElevenLabs (opcional — dejar vacío si no tienes)
